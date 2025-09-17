@@ -23,7 +23,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx
+  name: app-1
 spec:
   selector:
     app: app-1
@@ -31,4 +31,29 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:745540666431:certificate/a3b4a813-0eff-499d-bca2-2632c3589deb 
+    alb.ingress.kubernetes.io/group.name: usha43
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "app-1.shrihan.fun"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: app-1
+            port:
+              number: 80
+
       
